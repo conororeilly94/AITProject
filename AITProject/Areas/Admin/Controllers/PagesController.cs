@@ -57,29 +57,36 @@ namespace AITProject.Areas.Admin.Controllers
                 //Check for and set slug if needed
                 if (string.IsNullOrWhiteSpace(model.Slug))
                 {
-                    slug = model.Title.Replace("", "-").ToLower();
+                    slug = model.Title.Replace(" ", "-").ToLower();
                 }
                 else
                 {
-                    slug = model.Slug.Replace("", "-").ToLower();
+                    slug = model.Slug.Replace(" ", "-").ToLower();
                 }
 
                 //Make sure title and slug are unique
                 if (db.Pages.Any(x => x.Title == model.Title) || db.Pages.Any(x => x.Slug == slug))
                 {
-
+                    ModelState.AddModelError("", "That title already exists");
+                    return View(model);
                 }
 
                 //DTO the rest
+                dto.Slug = slug;
+                dto.Body = model.Body;
+                dto.HasSidebar = model.HasSidebar;
+                dto.Sorting = 100;
 
                 //Save DTO
-
+                db.Pages.Add(dto);
+                db.SaveChanges();
             }
 
             //Set TempData message
+            TempData["SM"] = "You have added a new page";
 
             //Redirect
-            return View();
+            return RedirectToAction("Add Page");
         }
     }
 }
