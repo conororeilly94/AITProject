@@ -114,8 +114,8 @@ namespace AITProject.Areas.Admin.Controllers
             //Return view with model
             return View(model);
         }
-        //GET: Admin/Pages/EditPage/id
 
+        //POST: Admin/Pages/EditPage/id
         [HttpPost]
         public ActionResult EditPage(PageVM model)
         {
@@ -177,6 +177,50 @@ namespace AITProject.Areas.Admin.Controllers
 
             //Redirect
             return RedirectToAction("Edit Page");
+        }
+
+        //GET: Admin/Pages/PageDetails/id
+        public ActionResult PageDetails(int id)
+        {
+            //Declare PageVM
+            PageVM model;
+
+            using (Db db = new Db())
+            {
+                //Get the page
+                PageDTO dto = db.Pages.Find(id);
+
+                //Confirm page exists
+                if (dto == null)
+                {
+                    return Content("The page does not exist");
+                }
+
+                //Init PageVM
+                model = new PageVM(dto);
+            }
+
+            //Return view with model
+            return View(model);
+        }
+
+        //GET: Admin/Pages/DeletePages/id
+        public ActionResult DeletePage(int id)
+        {
+            using (Db db = new Db())
+            {
+                //Get the page
+                PageDTO dto = db.Pages.Find(id);
+
+                //Remove the page
+                db.Pages.Remove(dto);
+
+                //Save
+                db.SaveChanges();
+            }
+
+            //Redirect
+            return RedirectToAction("Index");
         }
     }
 }
