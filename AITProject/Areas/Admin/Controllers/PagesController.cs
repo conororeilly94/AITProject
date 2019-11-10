@@ -222,5 +222,30 @@ namespace AITProject.Areas.Admin.Controllers
             //Redirect
             return RedirectToAction("Index");
         }
+
+        //GET: Admin/Pages/ReorderPages
+        [HttpPost]
+        public void ReorderPages(int[] id) 
+        {
+            using (Db db = new Db())
+            {
+                //Set inital count
+                int count = 1;
+
+                //Declare pageDTO
+                PageDTO dto;
+
+                //Set sorting for each page
+                foreach (var pageId in id)
+                {
+                    dto = db.Pages.Find(pageId);
+                    dto.Sorting = count;
+
+                    db.SaveChanges();
+
+                    count++;
+                }
+            }
+        }
     }
 }
